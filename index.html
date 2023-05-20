@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Taskify</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      background-color: #333;
+      color: #fff;
+    }
+    .container {
+      margin-top: 30px;
+    }
+    .task-list {
+      margin-top: 20px;
+    }
+    .completed {
+      text-decoration: line-through;
+      background-color: #ff4d4d;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Taskify</h1>
+    <div class="input-group mb-3">
+      <input type="text" class="form-control" id="task-input" placeholder="Digite uma tarefa">
+      <div class="input-group-append">
+        <button class="btn btn-primary" type="button" onclick="addTask()">Adicionar</button>
+      </div>
+    </div>
+    <ul class="list-group task-list" id="task-list" style="color: black;">
+     
+    </ul>
+  </div>
+
+  <script>
+    
+    var tasks = [];
+
+    
+    function addTask() {
+      var taskInput = document.getElementById('task-input');
+      var taskText = taskInput.value.trim();
+
+      if (taskText !== '') {
+        tasks.push({ text: taskText, completed: false });
+        taskInput.value = '';
+        updateTaskList();
+      }
+    }
+
+    
+    function updateTaskList() {
+      var taskList = document.getElementById('task-list');
+      taskList.innerHTML = '';
+
+      tasks.forEach(function(task, index) {
+        var listItem = document.createElement('li');
+        listItem.classList.add('list-group-item');
+        listItem.textContent = task.text;
+
+        if (task.completed) {
+          listItem.classList.add('completed')
+        }
+
+        listItem.addEventListener('click', function() {
+          deleteTask(index);
+        });
+
+        listItem.addEventListener('mouseover', function() {
+          listItem.style.backgroundColor = '#ff4d4d';
+        });
+
+        listItem.addEventListener('mouseout', function() {
+          listItem.style.backgroundColor = '';
+        });
+
+        taskList.appendChild(listItem);
+      });
+    }
+
+    // Função para excluir uma tarefa
+    function deleteTask(index) {
+      tasks.splice(index, 1);
+      updateTaskList();
+    }
+
+   
+    window.onload = function() {
+      var storedTasks = localStorage.getItem('tasks');
+
+      if (storedTasks) {
+        tasks = JSON.parse(storedTasks);
+        updateTaskList();
+      }
+    };
+
+    
+    window.onbeforeunload = function() {
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+    };
+  </script>
+</body>
+</html>
